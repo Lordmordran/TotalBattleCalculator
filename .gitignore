@@ -1,0 +1,8 @@
+# Linux temporary files
+*.tmp
+
+# Editor settings
+.vscode/
+
+# OS files
+.DS_Store
