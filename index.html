@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>Total Battle Calculator</title>
+
+    <link rel="stylesheet"
+          href="style.css">
+
+</head>
+
+<body>
+
+    <div class="container">
+
+        <h1>Total Battle Calculator</h1>
+
+        <div class="card">
+
+            <label>
+
+                Total Leadership
+
+            </label>
+
+            <input
+                id="leadership"
+                type="number"
+                placeholder="Enter leadership">
+
+            <label>
+
+                S9 Multiplier
+
+            </label>
+
+            <input
+                id="s9Multiplier"
+                type="number"
+                step="0.0001"
+                value="1.008">
+
+            <div class="buttons">
+
+                <button id="calculateButton">
+
+                    Calculate
+
+                </button>
+
+                <button id="saveButton">
+
+                    Save Default
+
+                </button>
+
+                <button id="resetButton">
+
+                    Reset
+
+                </button>
+
+            </div>
+
+        </div>
+
+        <div
+            id="results">
+
+        </div>
+
+    </div>
+
+    <script src="script.js"></script>
+
+</body>
+
+</html>
