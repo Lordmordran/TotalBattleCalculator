@@ -1,188 +1,382 @@
 /* =====================================
    Total Battle Calculator V4
-   ===================================== */
+   Dark Theme UI
+===================================== */
 
-*{
+
+* {
+
     margin:0;
     padding:0;
     box-sizing:border-box;
-    font-family:Arial, Helvetica, sans-serif;
+
+	font-family:
+		'Rajdhani',
+		Arial,
+		sans-serif;
+
 }
 
-body{
 
-    background:#121212;
-    color:#f5f5f5;
+body {
 
     min-height:100vh;
 
-    display:flex;
-    justify-content:center;
-    align-items:flex-start;
+    background:
+        radial-gradient(
+            circle at top,
+            #26334d,
+            #0b0e14 60%
+        );
 
-    padding:40px;
+    color:white;
+
+    display:flex;
+
+    justify-content:center;
+
+    padding:40px 20px;
 
 }
 
-.container{
+
+
+.app {
 
     width:100%;
+
     max-width:900px;
 
 }
 
-h1{
+
+
+/* =====================================
+   HEADER
+===================================== */
+
+
+.header {
 
     text-align:center;
 
     margin-bottom:30px;
 
-    font-size:2.2rem;
+}
+
+
+.header h1 {
+
+    font-family:
+        'Cinzel',
+        serif;
+
+    font-size:46px;
+
+    letter-spacing:3px;
 
 }
 
-.card{
+.header h2 {
 
-    background:#1e1e1e;
+    font-weight:normal;
 
-    border-radius:15px;
+    color:#aeb9d1;
 
-    padding:25px;
+    margin-top:8px;
+
+}
+
+
+.version {
+
+    display:inline-block;
+
+    margin-top:12px;
+
+    padding:5px 12px;
+
+    border-radius:20px;
+
+    background:#202938;
+
+    color:#7fb3ff;
+
+    font-size:14px;
+
+}
+
+
+
+/* =====================================
+   INPUT CARD
+===================================== */
+
+
+.card {
+
+    background:#151b26;
+
+    border:1px solid #293447;
+
+    border-radius:16px;
+
+    padding:30px;
 
     box-shadow:
-        0 0 20px rgba(0,0,0,.35);
+        0 10px 30px rgba(0,0,0,.4);
 
 }
 
-label{
+
+
+.input-group {
+
+    margin-bottom:20px;
+
+}
+
+
+
+label {
 
     display:block;
 
-    margin-top:20px;
     margin-bottom:8px;
+
+    color:#c8d2e8;
 
     font-weight:bold;
 
 }
 
-input{
+
+
+input {
 
     width:100%;
 
-    padding:12px;
+    padding:14px;
 
-    font-size:18px;
+    font-size:20px;
+
+    border-radius:10px;
 
     border:none;
 
-    border-radius:8px;
-
     outline:none;
 
-    background:#2d2d2d;
+    background:#0d1118;
 
     color:white;
 
-}
-
-input:focus{
-
-    box-shadow:0 0 0 2px #4da3ff;
+    border:1px solid #34435c;
 
 }
 
-.buttons{
+
+
+input:focus {
+
+    border-color:#4da3ff;
+
+    box-shadow:
+        0 0 10px rgba(77,163,255,.4);
+
+}
+
+
+
+/* =====================================
+   BUTTONS
+===================================== */
+
+
+.buttons {
 
     display:flex;
 
     gap:15px;
 
-    margin-top:30px;
+    margin-top:25px;
 
     flex-wrap:wrap;
 
 }
 
-button{
+
+
+button {
 
     flex:1;
 
-    min-width:180px;
-
-    padding:14px;
-
-    font-size:17px;
-
-    font-weight:bold;
+    padding:15px;
 
     border:none;
 
-    border-radius:8px;
+    border-radius:12px;
 
     cursor:pointer;
 
-    transition:.15s;
+    font-size:16px;
 
-    background:#3578e5;
+    font-weight:bold;
+
+    background:#3478f6;
 
     color:white;
 
+    transition:.2s;
+
 }
 
-button:hover{
+
+
+button:hover {
 
     transform:translateY(-2px);
 
+    filter:brightness(1.15);
+
 }
 
-button:active{
+
+
+button:active {
 
     transform:translateY(1px);
 
 }
 
-#results{
 
-    margin-top:35px;
+
+/* =====================================
+   RESULTS TABLE
+===================================== */
+
+
+.results {
+
+    margin-top:30px;
 
 }
 
-table{
+
+
+#results table {
 
     width:100%;
 
-    border-collapse:collapse;
+    table-layout:fixed;
 
-    margin-top:20px;
+    border-collapse:separate;
+
+    border-spacing:0;
+
+    background:#151b26;
+
+    border-radius:16px;
+
+    overflow:hidden;
+
+    box-shadow:
+        0 10px 30px rgba(0,0,0,.4);
 
 }
 
-th{
 
-    background:#2b2b2b;
 
-    padding:14px;
+#results th {
+
+    background:#202938;
+
+    padding:18px 12px;
+
+    color:#8fc1ff;
+
+    font-size:16px;
 
 }
 
-td{
 
-    padding:12px;
+
+#results td {
+
+    padding:18px 12px;
 
     text-align:center;
 
-    border-top:1px solid #333;
+    font-size:17px;
+
+    font-family:
+        "Courier New",
+        monospace;
+
+    border-bottom:
+        1px solid #293447;
 
 }
 
-tr:nth-child(even){
 
-    background:#1b1b1b;
+
+#results th:first-child,
+#results td:first-child {
+
+    width:12%;
+
+    font-family:
+        Arial,
+        sans-serif;
+
+    font-weight:bold;
 
 }
 
-tr:hover{
 
-    background:#2b2b2b;
+
+#results th:nth-child(2),
+#results td:nth-child(2) {
+
+    width:22%;
+
+}
+
+
+
+#results th:nth-child(n+3),
+#results td:nth-child(n+3) {
+
+    width:16.5%;
+
+}
+
+
+
+#results tr:last-child td {
+
+    border-bottom:none;
+
+}
+
+
+
+#results tr:hover {
+
+    background:#1e2737;
+
+}
+
+.temp-logo {
+
+    text-align:center;
+
+    font-size:80px;
+
+    margin-bottom:10px;
+
+    filter:
+        drop-shadow(
+            0 0 12px rgba(77,163,255,.6)
+        );
 
 }
