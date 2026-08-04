@@ -23,11 +23,21 @@ body {
     min-height:100vh;
 
     background:
-        radial-gradient(
-            circle at top,
-            #26334d,
-            #0b0e14 60%
-        );
+
+        linear-gradient(
+            rgba(8,12,18,.82),
+            rgba(8,12,18,.82)
+        ),
+
+        url("background.png");
+
+    background-size:cover;
+
+    background-position:center;
+
+    background-repeat:no-repeat;
+
+    background-attachment:fixed;
 
     color:white;
 
@@ -255,12 +265,12 @@ button:active {
 ===================================== */
 
 
-.results {
+
+#results{
 
     margin-top:30px;
 
 }
-
 
 
 #results table {
@@ -378,5 +388,36 @@ button:active {
         drop-shadow(
             0 0 12px rgba(77,163,255,.6)
         );
+
+}
+
+.logo-container{
+
+    display:flex;
+
+    justify-content:center;
+
+    margin-bottom:15px;
+
+}
+
+.logo{
+
+    width:180px;
+
+    max-width:80%;
+
+    height:auto;
+
+    filter:
+        drop-shadow(0 0 20px rgba(0,150,255,.65));
+
+    transition:.25s;
+
+}
+
+.logo:hover{
+
+    transform:scale(1.03);
 
 }
