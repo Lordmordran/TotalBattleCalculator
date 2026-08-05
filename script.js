@@ -14,13 +14,23 @@ const SETTINGS = {
 
     OFFSETS: {
 
-        Spearman: 3,
+        Spearman:3,
 
-        Archer: 0,
+        Archer:0,
 
-        Rider: 1,
+        Rider:1,
 
-        Flying: -1
+        Flying:-1
+
+    },
+
+    MONSTERS:{
+
+        M8_DIVISOR:6.3,
+
+        M9_DIVISOR:1.85,
+
+        M7_MULTIPLIER:2.21
 
     }
 
@@ -240,6 +250,36 @@ function calculate(){
 		S8: splitTier(tiers.S8)
 
 		};
+		
+	const monsters = {
+
+		M8: Math.floor(
+
+			stacks.G9.flying /
+
+			SETTINGS.MONSTERS.M8_DIVISOR
+
+		)
+
+		};
+
+	monsters.M9 = Math.floor(
+
+		monsters.M8 /
+
+		SETTINGS.MONSTERS.M9_DIVISOR
+
+		);
+
+	monsters.M7 = Math.floor(
+
+		monsters.M8 *
+
+		SETTINGS.MONSTERS.M7_MULTIPLIER
+
+		);
+
+
 
 results.innerHTML = `
 
@@ -285,9 +325,48 @@ ${Object.entries(stacks).map(([tier,data])=>`
 
 </table>
 
+<br><br>
+
+<h2>Monster Stacks</h2>
+
+<table>
+
+<tr>
+
+<th>Tier</th>
+
+<th>Units</th>
+
+</tr>
+
+<tr>
+
+<td>M9</td>
+
+<td>${monsters.M9.toLocaleString()}</td>
+
+</tr>
+
+<tr>
+
+<td>M8</td>
+
+<td>${monsters.M8.toLocaleString()}</td>
+
+</tr>
+
+<tr>
+
+<td>M7</td>
+
+<td>${monsters.M7.toLocaleString()}</td>
+
+</tr>
+
+</table>
+
 `;
 }
-
 
 // ---------- EVENTS ----------
 
