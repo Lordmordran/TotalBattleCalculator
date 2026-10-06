@@ -251,121 +251,392 @@ function calculate(){
 
 		};
 		
-	const monsters = {
+const monsters = {
 
-		M8: Math.floor(
+    M8: {
+        ranged: Math.floor(
+            stacks.G9.flying /
+            SETTINGS.MONSTERS.M8_DIVISOR
+        )
+    },
 
-			stacks.G9.flying /
+    M9: {},
 
-			SETTINGS.MONSTERS.M8_DIVISOR
+    M7: {}
 
-		)
+};
 
-		};
 
-	monsters.M9 = Math.floor(
+// M8
+monsters.M8.mounted =
+    monsters.M8.ranged - 2;
 
-		monsters.M8 /
+monsters.M8.flying =
+    monsters.M8.mounted - 2;
 
-		SETTINGS.MONSTERS.M9_DIVISOR
+monsters.M8.melee =
+    monsters.M8.flying - 2;
 
-		);
 
-	monsters.M7 = Math.floor(
+// M9
+monsters.M9.ranged =
+    Math.floor(
+        monsters.M8.melee /
+        SETTINGS.MONSTERS.M9_DIVISOR
+    );
 
-		monsters.M8 *
+monsters.M9.mounted =
+    monsters.M9.ranged - 2;
 
-		SETTINGS.MONSTERS.M7_MULTIPLIER
+monsters.M9.flying =
+    monsters.M9.mounted - 2;
 
-		);
+monsters.M9.melee =
+    monsters.M9.flying - 2;
+
+
+// M7
+monsters.M7.ranged =
+    Math.floor(
+        monsters.M8.melee *
+        SETTINGS.MONSTERS.M7_MULTIPLIER
+    );
+
+monsters.M7.mounted =
+    monsters.M7.ranged - 2;
+
+monsters.M7.flying =
+    monsters.M7.mounted - 2;
+
+monsters.M7.melee =
+    monsters.M7.flying - 2;
+
 
 
 
 results.innerHTML = `
 
-<h2>Stack Calculator</h2>
-
-<table>
-
-<tr>
-
-<th>Tier</th>
-
-<th>Leadership</th>
-
-<th>Spearman</th>
-
-<th>Archer</th>
-
-<th>Rider</th>
-
-<th>Flying</th>
-
-</tr>
-
-${Object.entries(stacks).map(([tier,data])=>`
-
-<tr>
-
-<td>${tier}</td>
-
-<td>${data.leadership.toLocaleString()}</td>
-
-<td>${data.spear.toLocaleString()}</td>
-
-<td>${data.archer.toLocaleString()}</td>
-
-<td>${data.rider.toLocaleString()}</td>
-
-<td>${data.flying.toLocaleString()}</td>
-
-</tr>
-
-`).join("")}
-
-</table>
-
-<br><br>
-
 <h2>Monster Stacks</h2>
 
-<table>
+<div class="monster-results">
 
-<tr>
+    <div class="monster-tier">
 
-<th>Tier</th>
+        <h3>M9</h3>
 
-<th>Units</th>
+        <div class="result-row">
+            <span>Melee</span>
+            <strong>${monsters.M9.melee.toLocaleString()}</strong>
+            <button class="copy-button"
+                    data-copy="${monsters.M9.melee}">
+                Copy
+            </button>
+        </div>
 
-</tr>
+        <div class="result-row">
+            <span>Flying</span>
+            <strong>${monsters.M9.flying.toLocaleString()}</strong>
+            <button class="copy-button"
+                    data-copy="${monsters.M9.flying}">
+                Copy
+            </button>
+        </div>
 
-<tr>
+        <div class="result-row">
+            <span>Mounted</span>
+            <strong>${monsters.M9.mounted.toLocaleString()}</strong>
+            <button class="copy-button"
+                    data-copy="${monsters.M9.mounted}">
+                Copy
+            </button>
+        </div>
 
-<td>M9</td>
+        <div class="result-row">
+            <span>Ranged</span>
+            <strong>${monsters.M9.ranged.toLocaleString()}</strong>
+            <button class="copy-button"
+                    data-copy="${monsters.M9.ranged}">
+                Copy
+            </button>
+        </div>
 
-<td>${monsters.M9.toLocaleString()}</td>
+    </div>
 
-</tr>
 
-<tr>
+    <div class="monster-tier">
 
-<td>M8</td>
+        <h3>M8</h3>
 
-<td>${monsters.M8.toLocaleString()}</td>
+        <div class="result-row">
+            <span>Melee</span>
+            <strong>${monsters.M8.melee.toLocaleString()}</strong>
+            <button class="copy-button"
+                    data-copy="${monsters.M8.melee}">
+                Copy
+            </button>
+        </div>
 
-</tr>
+        <div class="result-row">
+            <span>Flying</span>
+            <strong>${monsters.M8.flying.toLocaleString()}</strong>
+            <button class="copy-button"
+                    data-copy="${monsters.M8.flying}">
+                Copy
+            </button>
+        </div>
 
-<tr>
+        <div class="result-row">
+            <span>Mounted</span>
+            <strong>${monsters.M8.mounted.toLocaleString()}</strong>
+            <button class="copy-button"
+                    data-copy="${monsters.M8.mounted}">
+                Copy
+            </button>
+        </div>
 
-<td>M7</td>
+        <div class="result-row">
+            <span>Ranged</span>
+            <strong>${monsters.M8.ranged.toLocaleString()}</strong>
+            <button class="copy-button"
+                    data-copy="${monsters.M8.ranged}">
+                Copy
+            </button>
+        </div>
 
-<td>${monsters.M7.toLocaleString()}</td>
+    </div>
 
-</tr>
 
-</table>
+    <div class="monster-tier">
+
+        <h3>M7</h3>
+
+        <div class="result-row">
+            <span>Melee</span>
+            <strong>${monsters.M7.melee.toLocaleString()}</strong>
+            <button class="copy-button"
+                    data-copy="${monsters.M7.melee}">
+                Copy
+            </button>
+        </div>
+
+        <div class="result-row">
+            <span>Flying</span>
+            <strong>${monsters.M7.flying.toLocaleString()}</strong>
+            <button class="copy-button"
+                    data-copy="${monsters.M7.flying}">
+                Copy
+            </button>
+        </div>
+
+        <div class="result-row">
+            <span>Mounted</span>
+            <strong>${monsters.M7.mounted.toLocaleString()}</strong>
+            <button class="copy-button"
+                    data-copy="${monsters.M7.mounted}">
+                Copy
+            </button>
+        </div>
+
+        <div class="result-row">
+            <span>Ranged</span>
+            <strong>${monsters.M7.ranged.toLocaleString()}</strong>
+            <button class="copy-button"
+                    data-copy="${monsters.M7.ranged}">
+                Copy
+            </button>
+        </div>
+
+    </div>
+
+</div>
+
+
+<h2>Troop Stacks</h2>
+
+<div class="troop-results">
+
+    <div class="result-row">
+        <span>G9 Flying</span>
+        <strong>${stacks.G9.flying.toLocaleString()}</strong>
+        <button class="copy-button"
+                data-copy="${stacks.G9.flying}">
+            Copy
+        </button>
+    </div>
+
+    <div class="result-row">
+        <span>S9 Flying</span>
+        <strong>${stacks.S9.flying.toLocaleString()}</strong>
+        <button class="copy-button"
+                data-copy="${stacks.S9.flying}">
+            Copy
+        </button>
+    </div>
+
+    <div class="result-row">
+        <span>G8 Flying</span>
+        <strong>${stacks.G8.flying.toLocaleString()}</strong>
+        <button class="copy-button"
+                data-copy="${stacks.G8.flying}">
+            Copy
+        </button>
+    </div>
+
+    <div class="result-row">
+        <span>S8 Flying</span>
+        <strong>${stacks.S8.flying.toLocaleString()}</strong>
+        <button class="copy-button"
+                data-copy="${stacks.S8.flying}">
+            Copy
+        </button>
+    </div>
+
+
+    <div class="result-row">
+        <span>G9 Mounted</span>
+        <strong>${stacks.G9.rider.toLocaleString()}</strong>
+        <button class="copy-button"
+                data-copy="${stacks.G9.rider}">
+            Copy
+        </button>
+    </div>
+
+    <div class="result-row">
+        <span>S9 Mounted</span>
+        <strong>${stacks.S9.rider.toLocaleString()}</strong>
+        <button class="copy-button"
+                data-copy="${stacks.S9.rider}">
+            Copy
+        </button>
+    </div>
+
+    <div class="result-row">
+        <span>G8 Mounted</span>
+        <strong>${stacks.G8.rider.toLocaleString()}</strong>
+        <button class="copy-button"
+                data-copy="${stacks.G8.rider}">
+            Copy
+        </button>
+    </div>
+
+    <div class="result-row">
+        <span>S8 Mounted</span>
+        <strong>${stacks.S8.rider.toLocaleString()}</strong>
+        <button class="copy-button"
+                data-copy="${stacks.S8.rider}">
+            Copy
+        </button>
+    </div>
+
+
+    <div class="result-row">
+        <span>G9 Ranged</span>
+        <strong>${stacks.G9.archer.toLocaleString()}</strong>
+        <button class="copy-button"
+                data-copy="${stacks.G9.archer}">
+            Copy
+        </button>
+    </div>
+
+    <div class="result-row">
+        <span>G9 Melee</span>
+        <strong>${stacks.G9.spear.toLocaleString()}</strong>
+        <button class="copy-button"
+                data-copy="${stacks.G9.spear}">
+            Copy
+        </button>
+    </div>
+
+    <div class="result-row">
+        <span>S9 Ranged</span>
+        <strong>${stacks.S9.archer.toLocaleString()}</strong>
+        <button class="copy-button"
+                data-copy="${stacks.S9.archer}">
+            Copy
+        </button>
+    </div>
+
+    <div class="result-row">
+        <span>S9 Melee</span>
+        <strong>${stacks.S9.spear.toLocaleString()}</strong>
+        <button class="copy-button"
+                data-copy="${stacks.S9.spear}">
+            Copy
+        </button>
+    </div>
+
+    <div class="result-row">
+        <span>G8 Ranged</span>
+        <strong>${stacks.G8.archer.toLocaleString()}</strong>
+        <button class="copy-button"
+                data-copy="${stacks.G8.archer}">
+            Copy
+        </button>
+    </div>
+
+    <div class="result-row">
+        <span>G8 Melee</span>
+        <strong>${stacks.G8.spear.toLocaleString()}</strong>
+        <button class="copy-button"
+                data-copy="${stacks.G8.spear}">
+            Copy
+        </button>
+    </div>
+
+    <div class="result-row">
+        <span>S8 Ranged</span>
+        <strong>${stacks.S8.archer.toLocaleString()}</strong>
+        <button class="copy-button"
+                data-copy="${stacks.S8.archer}">
+            Copy
+        </button>
+    </div>
+
+    <div class="result-row">
+        <span>S8 Melee</span>
+        <strong>${stacks.S8.spear.toLocaleString()}</strong>
+        <button class="copy-button"
+                data-copy="${stacks.S8.spear}">
+            Copy
+        </button>
+    </div>
+
+</div>
 
 `;
+
+
+document
+    .querySelectorAll(".copy-button")
+    .forEach(button => {
+
+        button.addEventListener("click", async () => {
+
+            const value =
+                button.dataset.copy;
+
+            try {
+
+                await navigator.clipboard.writeText(value);
+
+                button.textContent = "Copied!";
+
+                setTimeout(() => {
+
+                    button.textContent = "Copy";
+
+                }, 1000);
+
+            } catch (error) {
+
+                alert("Unable to copy number.");
+
+            }
+
+        });
+
+    });
+
 }
 
 // ---------- EVENTS ----------
