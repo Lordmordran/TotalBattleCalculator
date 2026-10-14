@@ -481,3 +481,58 @@ button:active {
     }
 
 }
+
+/* =====================================
+   TRAINING REQUIREMENTS
+===================================== */
+
+
+.training-section {
+
+    margin-top:28px;
+
+    padding:18px;
+
+    border:1px solid #34435c;
+
+    border-radius:16px;
+
+    background:#0f141d;
+
+}
+
+
+#results .training-section h2 {
+
+    margin-top:0;
+
+}
+
+
+.training-section p {
+
+    text-align:center;
+
+    color:#aeb9d1;
+
+    margin-bottom:16px;
+
+}
+
+
+.training-section .troop-results {
+
+    margin-bottom:0;
+
+}
+
+
+@media (max-width:600px) {
+
+    .training-section {
+
+        padding:12px 10px;
+
+    }
+
+}

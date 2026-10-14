@@ -45,6 +45,9 @@ const leadershipInput =
 const multiplierInput =
     document.getElementById("s9Multiplier");
 
+const trainingMultiplierInput =
+    document.getElementById("trainingMultiplier");
+
 const calculateButton =
     document.getElementById("calculateButton");
 
@@ -219,6 +222,25 @@ function calculate(){
             multiplierInput.value
         );
 
+    const trainingMultiplier =
+        Number(
+            trainingMultiplierInput.value
+        );
+
+    if(
+        trainingMultiplierInput.value.trim() === "" ||
+        !Number.isInteger(trainingMultiplier) ||
+        trainingMultiplier < 1
+    ){
+
+        alert("Training multiplier must be a positive whole number (1, 2, 3...).");
+
+        trainingMultiplierInput.focus();
+
+        return;
+
+    }
+
     if(totalLeadership <= 0){
 
         alert("Enter a leadership value.");
@@ -312,6 +334,43 @@ monsters.M7.melee =
     monsters.M7.flying - 2;
 
 
+
+
+const trainingTroops = [
+    ["G9 Flying", stacks.G9.flying],
+    ["S9 Flying", stacks.S9.flying],
+    ["G8 Flying", stacks.G8.flying],
+    ["S8 Flying", stacks.S8.flying],
+
+    ["G9 Mounted", stacks.G9.rider],
+    ["S9 Mounted", stacks.S9.rider],
+    ["G8 Mounted", stacks.G8.rider],
+    ["S8 Mounted", stacks.S8.rider],
+
+    ["G9 Ranged", stacks.G9.archer],
+    ["G9 Melee", stacks.G9.spear],
+    ["S9 Ranged", stacks.S9.archer],
+    ["S9 Melee", stacks.S9.spear],
+
+    ["G8 Ranged", stacks.G8.archer],
+    ["G8 Melee", stacks.G8.spear],
+    ["S8 Ranged", stacks.S8.archer],
+    ["S8 Melee", stacks.S8.spear]
+];
+
+const trainingRows = trainingTroops.map(([label, count]) => {
+    const required = count * trainingMultiplier;
+
+    return `
+        <div class="result-row">
+            <span>${label}</span>
+            <strong>${required.toLocaleString()}</strong>
+            <button class="copy-button" data-copy="${required}">
+                Copy
+            </button>
+        </div>
+    `;
+}).join("");
 
 
 results.innerHTML = `
@@ -603,41 +662,65 @@ results.innerHTML = `
 
 </div>
 
+<section class="training-section">
+    <h2>Training Requirements</h2>
+    <p>
+        Total troops to train for each stack:
+        ${trainingMultiplier}× the calculated stack size.
+    </p>
+
+    <div class="troop-results">
+        ${trainingRows}
+    </div>
+</section>
+
 `;
 
-
-document
-    .querySelectorAll(".copy-button")
-    .forEach(button => {
-
-        button.addEventListener("click", async () => {
-
-            const value =
-                button.dataset.copy;
-
-            try {
-
-                await navigator.clipboard.writeText(value);
-
-                button.textContent = "Copied!";
-
-                setTimeout(() => {
-
-                    button.textContent = "Copy";
-
-                }, 1000);
-
-            } catch (error) {
-
-                alert("Unable to copy number.");
-
-            }
-
-        });
-
-    });
+    // Old buttons were replaced by the render above
+    lastCopiedButton = null;
 
 }
+
+
+// ---------- COPY BUTTONS ----------
+
+let lastCopiedButton = null;
+
+async function handleCopyClick(event){
+
+    const button =
+        event.target.closest(".copy-button");
+
+    if(!button){
+
+        return;
+
+    }
+
+    try {
+
+        await navigator.clipboard.writeText(
+            button.dataset.copy
+        );
+
+        if(lastCopiedButton && lastCopiedButton !== button){
+
+            lastCopiedButton.textContent = "Copy";
+
+        }
+
+        button.textContent = "Copied!";
+
+        lastCopiedButton = button;
+
+    } catch (error) {
+
+        alert("Unable to copy number.");
+
+    }
+
+}
+
 
 // ---------- EVENTS ----------
 
@@ -662,6 +745,14 @@ resetButton.addEventListener(
     "click",
 
     resetSettings
+
+);
+
+results.addEventListener(
+
+    "click",
+
+    handleCopyClick
 
 );
 
