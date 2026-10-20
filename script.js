@@ -8,7 +8,7 @@
 
 const SETTINGS = {
 
-    DEFAULT_S9_MULTIPLIER: 1.008,
+    DEFAULT_S9_MULTIPLIER: 1.0055,
 
     TIER_MULTIPLIER: 1.81,
 
@@ -128,7 +128,7 @@ function getBaseLeadership(totalLeadership, s9Multiplier){
         1 +
         s9Multiplier +
         SETTINGS.TIER_MULTIPLIER +
-        (SETTINGS.TIER_MULTIPLIER * s9Multiplier);
+        SETTINGS.TIER_MULTIPLIER;
 
     return totalLeadership / totalWeight;
 
@@ -155,8 +155,7 @@ function calculateTierLeadership(base, s9Multiplier){
 
         S8: Math.floor(
             base *
-            SETTINGS.TIER_MULTIPLIER *
-            s9Multiplier
+            SETTINGS.TIER_MULTIPLIER
         )
 
     };
