@@ -8,35 +8,9 @@
 
 const SETTINGS = {
 
-    // S9 stacks = G9 x this
-    S9_MULTIPLIER: 1.0055,
+    DEFAULT_S9_MULTIPLIER: 1.008,
 
     TIER_MULTIPLIER: 1.81,
-
-    // Leadership used by one unit
-    LEADERSHIP_COST: {
-
-        Spearman:1,
-
-        Archer:1,
-
-        Rider:2,
-
-        Flying:20,
-
-        Tank:10
-
-    },
-
-    TANKS: {
-
-        // E9 = S8 Flying (lions) x this
-        E9_MULTIPLIER:1.2,
-
-        // E8 = E9 x this
-        E8_MULTIPLIER:1.8
-
-    },
 
     OFFSETS: {
 
@@ -68,14 +42,77 @@ const SETTINGS = {
 const leadershipInput =
     document.getElementById("leadership");
 
+const multiplierInput =
+    document.getElementById("s9Multiplier");
+
 const trainingMultiplierInput =
     document.getElementById("trainingMultiplier");
 
 const calculateButton =
     document.getElementById("calculateButton");
 
+const saveButton =
+    document.getElementById("saveButton");
+
+const resetButton =
+    document.getElementById("resetButton");
+
 const results =
     document.getElementById("results");
+
+
+// ---------- LOAD SETTINGS ----------
+
+function loadSettings(){
+
+    const saved =
+        localStorage.getItem("s9Multiplier");
+
+    if(saved){
+
+        multiplierInput.value = saved;
+
+    }else{
+
+        multiplierInput.value =
+            SETTINGS.DEFAULT_S9_MULTIPLIER;
+
+    }
+
+}
+
+
+// ---------- SAVE SETTINGS ----------
+
+function saveSettings(){
+
+    localStorage.setItem(
+
+        "s9Multiplier",
+
+        multiplierInput.value
+
+    );
+
+    alert("Default multiplier saved!");
+
+}
+
+
+// ---------- RESET SETTINGS ----------
+
+function resetSettings(){
+
+    multiplierInput.value =
+        SETTINGS.DEFAULT_S9_MULTIPLIER;
+
+    localStorage.removeItem(
+        "s9Multiplier"
+    );
+
+    alert("Multiplier reset.");
+
+}
 
 
 // =====================================
@@ -83,95 +120,81 @@ const results =
 // =====================================
 
 
-// ---------- TIER SIZES ----------
+// ---------- CALCULATE BASE ----------
 
-function getTierMultipliers(s9Multiplier){
+function getBaseLeadership(totalLeadership, s9Multiplier){
+
+    const totalWeight =
+        1 +
+        s9Multiplier +
+        SETTINGS.TIER_MULTIPLIER +
+        (SETTINGS.TIER_MULTIPLIER * s9Multiplier);
+
+    return totalLeadership / totalWeight;
+
+}
+
+
+// ---------- CALCULATE TIERS ----------
+
+function calculateTierLeadership(base, s9Multiplier){
 
     return {
 
-        G9: 1,
+        G9: Math.floor(base),
 
-        S9: s9Multiplier,
+        S9: Math.floor(
+            base *
+            s9Multiplier
+        ),
 
-        G8: SETTINGS.TIER_MULTIPLIER,
+        G8: Math.floor(
+            base *
+            SETTINGS.TIER_MULTIPLIER
+        ),
 
-        S8: SETTINGS.TIER_MULTIPLIER
+        S8: Math.floor(
+            base *
+            SETTINGS.TIER_MULTIPLIER *
+            s9Multiplier
+        )
 
     };
 
 }
 
-
-// ---------- G9 RANGED DIVISOR ----------
-
-// Leadership used per G9 Ranged unit across the
-// whole army (about 25.54 with a 1.0055 multiplier)
-
-function getG9RangedDivisor(s9Multiplier){
-
-    const cost =
-        SETTINGS.LEADERSHIP_COST;
-
-    // Leadership per ranged unit within one tier:
-    // melee + ranged + mounted (ranged / 2) + flying (ranged / 20)
-    const perTier =
-        cost.Spearman +
-        cost.Archer +
-        (cost.Rider / 2) +
-        (cost.Flying / 20);
-
-    const tiers =
-        getTierMultipliers(s9Multiplier);
-
-    const tierTotal =
-        tiers.G9 +
-        tiers.S9 +
-        tiers.G8 +
-        tiers.S8;
-
-    // Tanks follow S8 Flying (S8 ranged / 20)
-    const tankTotal =
-        cost.Tank *
-        (tiers.S8 / 20) *
-        (
-            SETTINGS.TANKS.E9_MULTIPLIER +
-            SETTINGS.TANKS.E9_MULTIPLIER *
-            SETTINGS.TANKS.E8_MULTIPLIER
-        );
-
-    return (perTier * tierTotal) + tankTotal;
-
-}
-
-
 // =====================================
 // Part 5 - Split Tier
 // =====================================
 
-// Death order: melee, ranged, mounted, flying
+function splitTier(leadership){
 
-function splitTier(ranged){
+    // Divide leadership evenly
 
-    let archer =
-        ranged + SETTINGS.OFFSETS.Archer;
+    const perType =
+        Math.floor(
+            leadership / 4
+        );
 
     let spear =
-        ranged + SETTINGS.OFFSETS.Spearman;
+        perType + SETTINGS.OFFSETS.Spearman;
+
+    let archer =
+        perType + SETTINGS.OFFSETS.Archer;
 
     let rider =
         Math.floor(
-            ranged / 2
+            perType / 2
         ) + SETTINGS.OFFSETS.Rider;
 
     let flying =
-        Math.max(
-            0,
-            Math.floor(
-                rider / 10
-            ) + SETTINGS.OFFSETS.Flying
-        );
+        Math.floor(
+            perType / 20
+        ) + SETTINGS.OFFSETS.Flying;
 
     return {
+
+        leadership,
 
         spear,
 
@@ -185,127 +208,6 @@ function splitTier(ranged){
 
 }
 
-
-// =====================================
-// Part 6 - Build Army
-// =====================================
-
-function buildArmy(g9Ranged, s9Multiplier){
-
-    const tiers =
-        getTierMultipliers(s9Multiplier);
-
-    const stacks = {};
-
-    for(const tier in tiers){
-
-        stacks[tier] =
-            splitTier(
-                Math.floor(
-                    g9Ranged *
-                    tiers[tier]
-                )
-            );
-
-    }
-
-    const tanks = {};
-
-    tanks.E9 =
-        Math.floor(
-            stacks.S8.flying *
-            SETTINGS.TANKS.E9_MULTIPLIER
-        );
-
-    tanks.E8 =
-        Math.floor(
-            tanks.E9 *
-            SETTINGS.TANKS.E8_MULTIPLIER
-        );
-
-    return {
-
-        stacks,
-
-        tanks
-
-    };
-
-}
-
-
-// ---------- LEADERSHIP USED ----------
-
-function getLeadershipUsed(army){
-
-    const cost =
-        SETTINGS.LEADERSHIP_COST;
-
-    let used = 0;
-
-    for(const tier in army.stacks){
-
-        const stack =
-            army.stacks[tier];
-
-        used +=
-            stack.spear * cost.Spearman +
-            stack.archer * cost.Archer +
-            stack.rider * cost.Rider +
-            stack.flying * cost.Flying;
-
-    }
-
-    used +=
-        (army.tanks.E9 + army.tanks.E8) *
-        cost.Tank;
-
-    return used;
-
-}
-
-
-// ---------- BEST FIT ARMY ----------
-
-// Start from the divisor, then step G9 Ranged so the
-// army uses as much leadership as possible without going over
-
-function calculateArmy(totalLeadership, s9Multiplier){
-
-    let g9Ranged =
-        Math.floor(
-            totalLeadership /
-            getG9RangedDivisor(s9Multiplier)
-        );
-
-    while(
-        g9Ranged > 0 &&
-        getLeadershipUsed(
-            buildArmy(g9Ranged, s9Multiplier)
-        ) > totalLeadership
-    ){
-
-        g9Ranged--;
-
-    }
-
-    while(
-        getLeadershipUsed(
-            buildArmy(g9Ranged + 1, s9Multiplier)
-        ) <= totalLeadership
-    ){
-
-        g9Ranged++;
-
-    }
-
-    return buildArmy(
-        g9Ranged,
-        s9Multiplier
-    );
-
-}
-
 // ---------- MAIN CALCULATE ----------
 
 function calculate(){
@@ -316,7 +218,9 @@ function calculate(){
         );
 
     const s9Multiplier =
-        SETTINGS.S9_MULTIPLIER;
+        Number(
+            multiplierInput.value
+        );
 
     const trainingMultiplier =
         Number(
@@ -345,17 +249,29 @@ function calculate(){
 
     }
 
-    const army =
-        calculateArmy(
+    const base =
+        getBaseLeadership(
             totalLeadership,
             s9Multiplier
         );
 
-    const stacks =
-        army.stacks;
+    const tiers =
+        calculateTierLeadership(
+            base,
+            s9Multiplier
+        );
+        
+    const stacks = {
 
-    const tanks =
-        army.tanks;
+		G9: splitTier(tiers.G9),
+
+		S9: splitTier(tiers.S9),
+
+		G8: splitTier(tiers.G8),
+
+		S8: splitTier(tiers.S8)
+
+		};
 		
 const monsters = {
 
@@ -422,27 +338,24 @@ monsters.M7.melee =
 
 const trainingTroops = [
     ["G9 Flying", stacks.G9.flying],
+    ["S9 Flying", stacks.S9.flying],
+    ["G8 Flying", stacks.G8.flying],
+    ["S8 Flying", stacks.S8.flying],
+
     ["G9 Mounted", stacks.G9.rider],
+    ["S9 Mounted", stacks.S9.rider],
+    ["G8 Mounted", stacks.G8.rider],
+    ["S8 Mounted", stacks.S8.rider],
+
     ["G9 Ranged", stacks.G9.archer],
     ["G9 Melee", stacks.G9.spear],
-
-    ["G8 Flying", stacks.G8.flying],
-    ["G8 Mounted", stacks.G8.rider],
-    ["G8 Ranged", stacks.G8.archer],
-    ["G8 Melee", stacks.G8.spear],
-
-    ["S9 Flying", stacks.S9.flying],
-    ["S9 Mounted", stacks.S9.rider],
     ["S9 Ranged", stacks.S9.archer],
     ["S9 Melee", stacks.S9.spear],
 
-    ["S8 Flying", stacks.S8.flying],
-    ["S8 Mounted", stacks.S8.rider],
+    ["G8 Ranged", stacks.G8.archer],
+    ["G8 Melee", stacks.G8.spear],
     ["S8 Ranged", stacks.S8.archer],
-    ["S8 Melee", stacks.S8.spear],
-
-    ["E9 Tank", tanks.E9],
-    ["E8 Tank", tanks.E8]
+    ["S8 Melee", stacks.S8.spear]
 ];
 
 const trainingRows = trainingTroops.map(([label, count]) => {
@@ -637,24 +550,6 @@ results.innerHTML = `
         </button>
     </div>
 
-    <div class="result-row">
-        <span>E9 Tank</span>
-        <strong>${tanks.E9.toLocaleString()}</strong>
-        <button class="copy-button"
-                data-copy="${tanks.E9}">
-            Copy
-        </button>
-    </div>
-
-    <div class="result-row">
-        <span>E8 Tank</span>
-        <strong>${tanks.E8.toLocaleString()}</strong>
-        <button class="copy-button"
-                data-copy="${tanks.E8}">
-            Copy
-        </button>
-    </div>
-
 
     <div class="result-row">
         <span>G9 Mounted</span>
@@ -837,6 +732,22 @@ calculateButton.addEventListener(
 
 );
 
+saveButton.addEventListener(
+
+    "click",
+
+    saveSettings
+
+);
+
+resetButton.addEventListener(
+
+    "click",
+
+    resetSettings
+
+);
+
 results.addEventListener(
 
     "click",
@@ -845,3 +756,7 @@ results.addEventListener(
 
 );
 
+
+// ---------- START ----------
+
+loadSettings();
